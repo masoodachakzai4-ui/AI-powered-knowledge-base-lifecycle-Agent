@@ -1,0 +1,619 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 2. Hardened Primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isAdmin() {
+      return isVerifiedUser() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email == 'masoodachakzai4@gmail.com'
+      );
+    }
+
+    function isOwnerDoc() {
+      return isSignedIn() && existing().ownerId == request.auth.uid;
+    }
+
+    // 3. Entity Validation Blueprints
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'ownerId', 'fullName', 'email', 'role', 'institutionId', 'onboardingCompleted', 'createdAt']) &&
+             data.keys().hasOnly(['uid', 'ownerId', 'fullName', 'email', 'role', 'institutionId', 'institutionName', 'department', 'onboardingCompleted', 'createdAt', 'updatedAt']) &&
+             isValidId(data.uid) &&
+             data.uid == request.auth.uid &&
+             isValidId(data.ownerId) &&
+             data.ownerId == request.auth.uid &&
+             data.fullName is string && data.fullName.size() <= 150 &&
+             data.email is string && data.email.size() <= 256 &&
+             data.role is string && data.role.size() <= 64 &&
+             isValidId(data.institutionId) &&
+             (!('institutionName' in data) || (data.institutionName is string && data.institutionName.size() <= 200)) &&
+             (!('department' in data) || (data.department is string && data.department.size() <= 120)) &&
+             data.onboardingCompleted is bool &&
+             data.createdAt is string && data.createdAt.size() <= 64 &&
+             (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 64));
+    }
+
+    function isValidInstitution(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'name', 'type', 'country', 'isDemo', 'createdAt']) &&
+             data.keys().hasOnly(['id', 'ownerId', 'name', 'type', 'country', 'website', 'primaryDepartment', 'isDemo', 'createdAt', 'updatedAt']) &&
+             isValidId(data.id) &&
+             isValidId(data.ownerId) &&
+             data.ownerId == request.auth.uid &&
+             data.name is string && data.name.size() >= 1 && data.name.size() <= 200 &&
+             data.type is string && data.type.size() <= 32 &&
+             data.country is string && data.country.size() <= 100 &&
+             (!('website' in data) || (data.website is string && data.website.size() <= 300)) &&
+             (!('primaryDepartment' in data) || (data.primaryDepartment is string && data.primaryDepartment.size() <= 120)) &&
+             data.isDemo is bool &&
+             data.createdAt is string && data.createdAt.size() <= 64 &&
+             (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 64));
+    }
+
+    function isValidMembership(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'institutionId', 'userId', 'userEmail', 'userName', 'role', 'status', 'createdAt']) &&
+             data.keys().hasOnly(['id', 'ownerId', 'institutionId', 'userId', 'userEmail', 'userName', 'role', 'department', 'status', 'createdAt']) &&
+             isValidId(data.id) &&
+             isValidId(data.ownerId) &&
+             data.ownerId == request.auth.uid &&
+             isValidId(data.institutionId) &&
+             isValidId(data.userId) &&
+             data.userEmail is string && data.userEmail.size() <= 256 &&
+             data.userName is string && data.userName.size() <= 150 &&
+             data.role is string && data.role.size() <= 64 &&
+             (!('department' in data) || (data.department is string && data.department.size() <= 120)) &&
+             data.status is string && data.status.size() <= 32 &&
+             data.createdAt is string && data.createdAt.size() <= 64;
+    }
+
+    function isValidDepartment(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'institutionId', 'name', 'createdAt']) &&
+             data.keys().hasOnly(['id', 'ownerId', 'institutionId', 'name', 'description', 'headName', 'createdAt']) &&
+             isValidId(data.id) &&
+             isValidId(data.ownerId) &&
+             data.ownerId == request.auth.uid &&
+             isValidId(data.institutionId) &&
+             data.name is string && data.name.size() >= 1 && data.name.size() <= 120 &&
+             (!('description' in data) || (data.description is string && data.description.size() <= 500)) &&
+             (!('headName' in data) || (data.headName is string && data.headName.size() <= 120)) &&
+             data.createdAt is string && data.createdAt.size() <= 64;
+    }
+
+    function isValidDocumentRecord(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'institutionId', 'title', 'fileName', 'fileType', 'department', 'category', 'version', 'status', 'accessLevel', 'extractedText', 'isSampleData', 'uploadedBy', 'createdAt']) &&
+             data.keys().hasOnly(['id', 'ownerId', 'institutionId', 'title', 'fileName', 'fileType', 'fileSize', 'department', 'category', 'language', 'effectiveDate', 'expiryDate', 'reviewDate', 'version', 'status', 'accessLevel', 'extractedText', 'isSampleData', 'uploadedBy', 'createdAt', 'updatedAt']) &&
+             isValidId(data.id) &&
+             isValidId(data.ownerId) &&
+             data.ownerId == request.auth.uid &&
+             isValidId(data.institutionId) &&
+             data.title is string && data.title.size() <= 300 &&
+             data.fileName is string && data.fileName.size() <= 300 &&
+             data.fileType is string && data.fileType.size() <= 64 &&
+             (!('fileSize' in data) || data.fileSize is number) &&
+             data.department is string && data.department.size() <= 120 &&
+             data.category is string && data.category.size() <= 120 &&
+             (!('language' in data) || (data.language is string && data.language.size() <= 64)) &&
+             (!('effectiveDate' in data) || (data.effectiveDate is string && data.effectiveDate.size() <= 64)) &&
+             (!('expiryDate' in data) || (data.expiryDate is string && data.expiryDate.size() <= 64)) &&
+             (!('reviewDate' in data) || (data.reviewDate is string && data.reviewDate.size() <= 64)) &&
+             data.version is number &&
+             data.status is string && data.status.size() <= 64 &&
+             data.accessLevel is string && data.accessLevel.size() <= 64 &&
+             data.extractedText is string && data.extractedText.size() <= 200000 &&
+             data.isSampleData is bool &&
+             data.uploadedBy is string && data.uploadedBy.size() <= 150 &&
+             data.createdAt is string && data.createdAt.size() <= 64 &&
+             (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 64));
+    }
+
+    function isValidDocumentVersion(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'institutionId', 'documentId', 'versionNumber', 'title', 'extractedText', 'changeSummary', 'createdBy', 'createdAt']) &&
+             data.keys().hasOnly(['id', 'ownerId', 'institutionId', 'documentId', 'versionNumber', 'title', 'extractedText', 'changeSummary', 'effectiveDate', 'createdBy', 'createdAt']) &&
+             isValidId(data.id) &&
+             isValidId(data.ownerId) &&
+             data.ownerId == request.auth.uid &&
+             isValidId(data.institutionId) &&
+             isValidId(data.documentId) &&
+             data.versionNumber is number &&
+             data.title is string && data.title.size() <= 300 &&
+             data.extractedText is string && data.extractedText.size() <= 200000 &&
+             data.changeSummary is string && data.changeSummary.size() <= 2000 &&
+             (!('effectiveDate' in data) || (data.effectiveDate is string && data.effectiveDate.size() <= 64)) &&
+             data.createdBy is string && data.createdBy.size() <= 150 &&
+             data.createdAt is string && data.createdAt.size() <= 64;
+    }
+
+    function isValidKnowledgeChunk(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'institutionId', 'documentId', 'documentTitle', 'sectionTitle', 'content', 'department', 'category', 'accessLevel', 'isApproved', 'createdAt']) &&
+             data.keys().hasOnly(['id', 'ownerId', 'institutionId', 'documentId', 'articleId', 'documentTitle', 'sectionTitle', 'content', 'department', 'category', 'accessLevel', 'isApproved', 'effectiveDate', 'createdAt']) &&
+             isValidId(data.id) &&
+             isValidId(data.ownerId) &&
+             data.ownerId == request.auth.uid &&
+             isValidId(data.institutionId) &&
+             isValidId(data.documentId) &&
+             (!('articleId' in data) || (data.articleId is string && data.articleId.size() <= 128)) &&
+             data.documentTitle is string && data.documentTitle.size() <= 300 &&
+             data.sectionTitle is string && data.sectionTitle.size() <= 300 &&
+             data.content is string && data.content.size() <= 20000 &&
+             data.department is string && data.department.size() <= 120 &&
+             data.category is string && data.category.size() <= 120 &&
+             data.accessLevel is string && data.accessLevel.size() <= 64 &&
+             data.isApproved is bool &&
+             (!('effectiveDate' in data) || (data.effectiveDate is string && data.effectiveDate.size() <= 64)) &&
+             data.createdAt is string && data.createdAt.size() <= 64;
+    }
+
+    function isValidKnowledgeArticle(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'institutionId', 'sourceDocumentId', 'sourceDocumentTitle', 'title', 'summary', 'contentMarkdown', 'department', 'category', 'status', 'verificationStatus', 'version', 'accessLevel', 'isSampleData', 'createdBy', 'createdAt']) &&
+             data.keys().hasOnly(['id', 'ownerId', 'institutionId', 'sourceDocumentId', 'sourceDocumentTitle', 'title', 'summary', 'contentMarkdown', 'department', 'category', 'status', 'verificationStatus', 'version', 'effectiveDate', 'expiryDate', 'reviewDate', 'accessLevel', 'sourceReferences', 'faqsJson', 'verificationReportJson', 'isSampleData', 'createdBy', 'approvedBy', 'approvedAt', 'createdAt', 'updatedAt']) &&
+             isValidId(data.id) &&
+             isValidId(data.ownerId) &&
+             data.ownerId == request.auth.uid &&
+             isValidId(data.institutionId) &&
+             isValidId(data.sourceDocumentId) &&
+             data.sourceDocumentTitle is string && data.sourceDocumentTitle.size() <= 300 &&
+             data.title is string && data.title.size() <= 300 &&
+             data.summary is string && data.summary.size() <= 4000 &&
+             data.contentMarkdown is string && data.contentMarkdown.size() <= 200000 &&
+             data.department is string && data.department.size() <= 120 &&
+             data.category is string && data.category.size() <= 120 &&
+             data.status is string && data.status.size() <= 64 &&
+             data.verificationStatus is string && data.verificationStatus.size() <= 64 &&
+             data.version is number &&
+             (!('effectiveDate' in data) || (data.effectiveDate is string && data.effectiveDate.size() <= 64)) &&
+             (!('expiryDate' in data) || (data.expiryDate is string && data.expiryDate.size() <= 64)) &&
+             (!('reviewDate' in data) || (data.reviewDate is string && data.reviewDate.size() <= 64)) &&
+             data.accessLevel is string && data.accessLevel.size() <= 64 &&
+             (!('sourceReferences' in data) || (data.sourceReferences is string && data.sourceReferences.size() <= 5000)) &&
+             (!('faqsJson' in data) || (data.faqsJson is string && data.faqsJson.size() <= 50000)) &&
+             (!('verificationReportJson' in data) || (data.verificationReportJson is string && data.verificationReportJson.size() <= 50000)) &&
+             data.isSampleData is bool &&
+             data.createdBy is string && data.createdBy.size() <= 150 &&
+             (!('approvedBy' in data) || (data.approvedBy is string && data.approvedBy.size() <= 150)) &&
+             (!('approvedAt' in data) || (data.approvedAt is string && data.approvedAt.size() <= 64)) &&
+             data.createdAt is string && data.createdAt.size() <= 64 &&
+             (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 64));
+    }
+
+    function isValidArticleVersion(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'institutionId', 'articleId', 'versionNumber', 'title', 'contentMarkdown', 'status', 'createdAt']) &&
+             data.keys().hasOnly(['id', 'ownerId', 'institutionId', 'articleId', 'versionNumber', 'title', 'contentMarkdown', 'changeNotes', 'status', 'reviewerName', 'createdAt']) &&
+             isValidId(data.id) &&
+             isValidId(data.ownerId) &&
+             data.ownerId == request.auth.uid &&
+             isValidId(data.institutionId) &&
+             isValidId(data.articleId) &&
+             data.versionNumber is number &&
+             data.title is string && data.title.size() <= 300 &&
+             data.contentMarkdown is string && data.contentMarkdown.size() <= 200000 &&
+             (!('changeNotes' in data) || (data.changeNotes is string && data.changeNotes.size() <= 2000)) &&
+             data.status is string && data.status.size() <= 64 &&
+             (!('reviewerName' in data) || (data.reviewerName is string && data.reviewerName.size() <= 150)) &&
+             data.createdAt is string && data.createdAt.size() <= 64;
+    }
+
+    function isValidWorkflowRun(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'institutionId', 'documentId', 'documentTitle', 'currentStage', 'currentStageName', 'status', 'progressPercent', 'revisionRound', 'startedAt']) &&
+             data.keys().hasOnly(['id', 'ownerId', 'institutionId', 'documentId', 'documentTitle', 'articleId', 'currentStage', 'currentStageName', 'status', 'progressPercent', 'revisionRound', 'retryCount', 'errorMessage', 'submittedAt', 'startedAt', 'completedAt']) &&
+             isValidId(data.id) &&
+             isValidId(data.ownerId) &&
+             data.ownerId == request.auth.uid &&
+             isValidId(data.institutionId) &&
+             isValidId(data.documentId) &&
+             data.documentTitle is string && data.documentTitle.size() <= 300 &&
+             (!('articleId' in data) || (data.articleId is string && data.articleId.size() <= 128)) &&
+             data.currentStage is number &&
+             data.currentStageName is string && data.currentStageName.size() <= 120 &&
+             data.status is string && data.status.size() <= 64 &&
+             data.progressPercent is number &&
+             data.revisionRound is number &&
+             (!('retryCount' in data) || data.retryCount is number) &&
+             (!('errorMessage' in data) || (data.errorMessage is string && data.errorMessage.size() <= 2000)) &&
+             (!('submittedAt' in data) || (data.submittedAt is string && data.submittedAt.size() <= 64)) &&
+             data.startedAt is string && data.startedAt.size() <= 64 &&
+             (!('completedAt' in data) || (data.completedAt is string && data.completedAt.size() <= 64));
+    }
+
+    function isValidWorkflowStage(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'institutionId', 'runId', 'stageNumber', 'stageName', 'status', 'outputSummary', 'startedAt']) &&
+             data.keys().hasOnly(['id', 'ownerId', 'institutionId', 'runId', 'stageNumber', 'stageName', 'status', 'outputSummary', 'detailsJson', 'inputReference', 'outputReference', 'errorMessage', 'retryCount', 'revisionCount', 'durationMs', 'startedAt', 'completedAt']) &&
+             isValidId(data.id) &&
+             isValidId(data.ownerId) &&
+             data.ownerId == request.auth.uid &&
+             isValidId(data.institutionId) &&
+             isValidId(data.runId) &&
+             data.stageNumber is number &&
+             data.stageName is string && data.stageName.size() <= 120 &&
+             data.status is string && data.status.size() <= 64 &&
+             data.outputSummary is string && data.outputSummary.size() <= 20000 &&
+             (!('detailsJson' in data) || (data.detailsJson is string && data.detailsJson.size() <= 100000)) &&
+             (!('inputReference' in data) || (data.inputReference is string && data.inputReference.size() <= 2000)) &&
+             (!('outputReference' in data) || (data.outputReference is string && data.outputReference.size() <= 2000)) &&
+             (!('errorMessage' in data) || (data.errorMessage is string && data.errorMessage.size() <= 2000)) &&
+             (!('retryCount' in data) || data.retryCount is number) &&
+             (!('revisionCount' in data) || data.revisionCount is number) &&
+             (!('durationMs' in data) || data.durationMs is number) &&
+             data.startedAt is string && data.startedAt.size() <= 64 &&
+             (!('completedAt' in data) || (data.completedAt is string && data.completedAt.size() <= 64));
+    }
+
+    function isValidReviewTask(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'institutionId', 'articleId', 'documentId', 'articleTitle', 'department', 'category', 'verificationStatus', 'status', 'createdAt']) &&
+             data.keys().hasOnly(['id', 'ownerId', 'institutionId', 'articleId', 'documentId', 'runId', 'articleTitle', 'department', 'category', 'verificationStatus', 'status', 'reviewerNotes', 'reviewedBy', 'reviewedAt', 'createdAt']) &&
+             isValidId(data.id) &&
+             isValidId(data.ownerId) &&
+             data.ownerId == request.auth.uid &&
+             isValidId(data.institutionId) &&
+             isValidId(data.articleId) &&
+             isValidId(data.documentId) &&
+             (!('runId' in data) || (data.runId is string && data.runId.size() <= 128)) &&
+             data.articleTitle is string && data.articleTitle.size() <= 300 &&
+             data.department is string && data.department.size() <= 120 &&
+             data.category is string && data.category.size() <= 120 &&
+             data.verificationStatus is string && data.verificationStatus.size() <= 64 &&
+             data.status is string && data.status.size() <= 64 &&
+             (!('reviewerNotes' in data) || (data.reviewerNotes is string && data.reviewerNotes.size() <= 4000)) &&
+             (!('reviewedBy' in data) || (data.reviewedBy is string && data.reviewedBy.size() <= 150)) &&
+             (!('reviewedAt' in data) || (data.reviewedAt is string && data.reviewedAt.size() <= 64)) &&
+             data.createdAt is string && data.createdAt.size() <= 64;
+    }
+
+    function isValidLifecycleProposal(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'institutionId', 'documentId', 'targetTitle', 'department', 'actionType', 'reason', 'status', 'createdAt']) &&
+             data.keys().hasOnly(['id', 'ownerId', 'institutionId', 'articleId', 'documentId', 'targetTitle', 'department', 'actionType', 'reason', 'diffSummary', 'oldVersionText', 'newVersionText', 'status', 'reviewedBy', 'reviewedAt', 'createdAt']) &&
+             isValidId(data.id) &&
+             isValidId(data.ownerId) &&
+             data.ownerId == request.auth.uid &&
+             isValidId(data.institutionId) &&
+             (!('articleId' in data) || (data.articleId is string && data.articleId.size() <= 128)) &&
+             isValidId(data.documentId) &&
+             data.targetTitle is string && data.targetTitle.size() <= 300 &&
+             data.department is string && data.department.size() <= 120 &&
+             data.actionType is string && data.actionType.size() <= 32 &&
+             data.reason is string && data.reason.size() <= 4000 &&
+             (!('diffSummary' in data) || (data.diffSummary is string && data.diffSummary.size() <= 20000)) &&
+             (!('oldVersionText' in data) || (data.oldVersionText is string && data.oldVersionText.size() <= 100000)) &&
+             (!('newVersionText' in data) || (data.newVersionText is string && data.newVersionText.size() <= 100000)) &&
+             data.status is string && data.status.size() <= 64 &&
+             (!('reviewedBy' in data) || (data.reviewedBy is string && data.reviewedBy.size() <= 150)) &&
+             (!('reviewedAt' in data) || (data.reviewedAt is string && data.reviewedAt.size() <= 64)) &&
+             data.createdAt is string && data.createdAt.size() <= 64;
+    }
+
+    function isValidConversation(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'institutionId', 'userId', 'title', 'createdAt']) &&
+             data.keys().hasOnly(['id', 'ownerId', 'institutionId', 'userId', 'title', 'createdAt', 'updatedAt']) &&
+             isValidId(data.id) &&
+             isValidId(data.ownerId) &&
+             data.ownerId == request.auth.uid &&
+             isValidId(data.institutionId) &&
+             isValidId(data.userId) &&
+             data.title is string && data.title.size() <= 300 &&
+             data.createdAt is string && data.createdAt.size() <= 64 &&
+             (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 64));
+    }
+
+    function isValidChatMessage(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'institutionId', 'conversationId', 'role', 'content', 'createdAt']) &&
+             data.keys().hasOnly(['id', 'ownerId', 'institutionId', 'conversationId', 'role', 'content', 'citationsJson', 'feedback', 'createdAt']) &&
+             isValidId(data.id) &&
+             isValidId(data.ownerId) &&
+             data.ownerId == request.auth.uid &&
+             isValidId(data.institutionId) &&
+             isValidId(data.conversationId) &&
+             data.role is string && data.role.size() <= 32 &&
+             data.content is string && data.content.size() <= 50000 &&
+             (!('citationsJson' in data) || (data.citationsJson is string && data.citationsJson.size() <= 20000)) &&
+             (!('feedback' in data) || (data.feedback is string && data.feedback.size() <= 64)) &&
+             data.createdAt is string && data.createdAt.size() <= 64;
+    }
+
+    function isValidUnansweredQuestion(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'institutionId', 'question', 'askedByRole', 'status', 'createdAt']) &&
+             data.keys().hasOnly(['id', 'ownerId', 'institutionId', 'question', 'askedByRole', 'departmentSuggested', 'status', 'resolutionNotes', 'createdAt']) &&
+             isValidId(data.id) &&
+             isValidId(data.ownerId) &&
+             data.ownerId == request.auth.uid &&
+             isValidId(data.institutionId) &&
+             data.question is string && data.question.size() <= 2000 &&
+             data.askedByRole is string && data.askedByRole.size() <= 64 &&
+             (!('departmentSuggested' in data) || (data.departmentSuggested is string && data.departmentSuggested.size() <= 120)) &&
+             data.status is string && data.status.size() <= 64 &&
+             (!('resolutionNotes' in data) || (data.resolutionNotes is string && data.resolutionNotes.size() <= 2000)) &&
+             data.createdAt is string && data.createdAt.size() <= 64;
+    }
+
+    function isValidAuditLog(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'institutionId', 'actorName', 'actorType', 'action', 'targetType', 'targetId', 'targetTitle', 'createdAt']) &&
+             data.keys().hasOnly(['id', 'ownerId', 'institutionId', 'actorName', 'actorType', 'action', 'targetType', 'targetId', 'targetTitle', 'previousStatus', 'newStatus', 'reason', 'workflowRunId', 'createdAt']) &&
+             isValidId(data.id) &&
+             isValidId(data.ownerId) &&
+             data.ownerId == request.auth.uid &&
+             isValidId(data.institutionId) &&
+             data.actorName is string && data.actorName.size() <= 150 &&
+             data.actorType is string && data.actorType.size() <= 64 &&
+             data.action is string && data.action.size() <= 200 &&
+             data.targetType is string && data.targetType.size() <= 64 &&
+             data.targetId is string && data.targetId.size() <= 128 &&
+             data.targetTitle is string && data.targetTitle.size() <= 300 &&
+             (!('previousStatus' in data) || (data.previousStatus is string && data.previousStatus.size() <= 64)) &&
+             (!('newStatus' in data) || (data.newStatus is string && data.newStatus.size() <= 64)) &&
+             (!('reason' in data) || (data.reason is string && data.reason.size() <= 2000)) &&
+             (!('workflowRunId' in data) || (data.workflowRunId is string && data.workflowRunId.size() <= 128)) &&
+             data.createdAt is string && data.createdAt.size() <= 64;
+    }
+
+    function isValidNotificationItem(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'institutionId', 'title', 'message', 'type', 'read', 'createdAt']) &&
+             data.keys().hasOnly(['id', 'ownerId', 'institutionId', 'title', 'message', 'type', 'read', 'createdAt']) &&
+             isValidId(data.id) &&
+             isValidId(data.ownerId) &&
+             data.ownerId == request.auth.uid &&
+             isValidId(data.institutionId) &&
+             data.title is string && data.title.size() <= 200 &&
+             data.message is string && data.message.size() <= 1000 &&
+             data.type is string && data.type.size() <= 64 &&
+             data.read is bool &&
+             data.createdAt is string && data.createdAt.size() <= 64;
+    }
+
+    // 4. Collection Match Blocks
+    match /admins/{adminId} {
+      allow get: if isSignedIn() && isValidId(adminId) && (request.auth.uid == adminId || isAdmin());
+      allow list, create, update, delete: if false;
+    }
+
+    match /users/{userId} {
+      allow get: if isSignedIn() && isValidId(userId) && (request.auth.uid == userId || isAdmin());
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(userId) && request.auth.uid == userId && isValidUser(incoming());
+      allow update: if isSignedIn() && isValidId(userId) && isValidUser(incoming()) && (
+        isAdmin() ||
+        (request.auth.uid == userId &&
+         incoming().ownerId == existing().ownerId &&
+         incoming().createdAt == existing().createdAt &&
+         incoming().diff(existing()).affectedKeys().hasOnly(['fullName', 'role', 'institutionId', 'institutionName', 'department', 'onboardingCompleted', 'updatedAt']))
+      );
+      allow delete: if false;
+    }
+
+    match /institutions/{institutionId} {
+      allow get: if isSignedIn() && isValidId(institutionId) && (isOwnerDoc() || isAdmin());
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(institutionId) && isValidInstitution(incoming());
+      allow update: if isSignedIn() && isValidId(institutionId) && isValidInstitution(incoming()) && (
+        isAdmin() ||
+        (isOwnerDoc() &&
+         incoming().ownerId == existing().ownerId &&
+         incoming().createdAt == existing().createdAt &&
+         incoming().diff(existing()).affectedKeys().hasOnly(['name', 'type', 'country', 'website', 'primaryDepartment', 'updatedAt']))
+      );
+      allow delete: if false;
+    }
+
+    match /workspace_memberships/{membershipId} {
+      allow get: if isSignedIn() && isValidId(membershipId) && (isOwnerDoc() || isAdmin());
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(membershipId) && isValidMembership(incoming());
+      allow update: if isSignedIn() && isValidId(membershipId) && isValidMembership(incoming()) && (
+        isAdmin() ||
+        (isOwnerDoc() &&
+         incoming().ownerId == existing().ownerId &&
+         incoming().createdAt == existing().createdAt &&
+         incoming().diff(existing()).affectedKeys().hasOnly(['role', 'department', 'status', 'userName']))
+      );
+      allow delete: if isSignedIn() && isValidId(membershipId) && (isOwnerDoc() || isAdmin());
+    }
+
+    match /departments/{departmentId} {
+      allow get: if isSignedIn() && isValidId(departmentId) && (isOwnerDoc() || isAdmin());
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(departmentId) && isValidDepartment(incoming());
+      allow update: if isSignedIn() && isValidId(departmentId) && isValidDepartment(incoming()) && (
+        isAdmin() ||
+        (isOwnerDoc() &&
+         incoming().ownerId == existing().ownerId &&
+         incoming().createdAt == existing().createdAt &&
+         incoming().diff(existing()).affectedKeys().hasOnly(['name', 'description', 'headName']))
+      );
+      allow delete: if isSignedIn() && isValidId(departmentId) && (isOwnerDoc() || isAdmin());
+    }
+
+    match /documents/{documentId} {
+      allow get: if isSignedIn() && isValidId(documentId) && (isOwnerDoc() || isAdmin());
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(documentId) && isValidDocumentRecord(incoming());
+      allow update: if isSignedIn() && isValidId(documentId) && isValidDocumentRecord(incoming()) && (
+        isAdmin() ||
+        (isOwnerDoc() &&
+         incoming().ownerId == existing().ownerId &&
+         incoming().createdAt == existing().createdAt &&
+         incoming().diff(existing()).affectedKeys().hasOnly(['title', 'department', 'category', 'language', 'effectiveDate', 'expiryDate', 'reviewDate', 'version', 'status', 'accessLevel', 'extractedText', 'updatedAt']))
+      );
+      allow delete: if isSignedIn() && isValidId(documentId) && (isOwnerDoc() || isAdmin());
+    }
+
+    match /document_versions/{versionId} {
+      allow get: if isSignedIn() && isValidId(versionId) && (isOwnerDoc() || isAdmin());
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(versionId) && isValidDocumentVersion(incoming());
+      allow update, delete: if false;
+    }
+
+    match /knowledge_chunks/{chunkId} {
+      allow get: if isSignedIn() && isValidId(chunkId) && (isOwnerDoc() || isAdmin());
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(chunkId) && isValidKnowledgeChunk(incoming());
+      allow update: if isSignedIn() && isValidId(chunkId) && isValidKnowledgeChunk(incoming()) && (
+        isAdmin() ||
+        (isOwnerDoc() &&
+         incoming().ownerId == existing().ownerId &&
+         incoming().createdAt == existing().createdAt &&
+         incoming().diff(existing()).affectedKeys().hasOnly(['articleId', 'isApproved', 'accessLevel', 'effectiveDate']))
+      );
+      allow delete: if isSignedIn() && isValidId(chunkId) && (isOwnerDoc() || isAdmin());
+    }
+
+    match /knowledge_articles/{articleId} {
+      allow get: if isSignedIn() && isValidId(articleId) && (isOwnerDoc() || isAdmin());
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(articleId) && isValidKnowledgeArticle(incoming());
+      allow update: if isSignedIn() && isValidId(articleId) && isValidKnowledgeArticle(incoming()) && (
+        isAdmin() ||
+        (isOwnerDoc() &&
+         incoming().ownerId == existing().ownerId &&
+         incoming().createdAt == existing().createdAt &&
+         incoming().diff(existing()).affectedKeys().hasOnly(['title', 'summary', 'contentMarkdown', 'department', 'category', 'status', 'verificationStatus', 'version', 'effectiveDate', 'expiryDate', 'reviewDate', 'accessLevel', 'sourceReferences', 'faqsJson', 'verificationReportJson', 'approvedBy', 'approvedAt', 'updatedAt']))
+      );
+      allow delete: if isSignedIn() && isValidId(articleId) && (isOwnerDoc() || isAdmin());
+    }
+
+    match /article_versions/{versionId} {
+      allow get: if isSignedIn() && isValidId(versionId) && (isOwnerDoc() || isAdmin());
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(versionId) && isValidArticleVersion(incoming());
+      allow update, delete: if false;
+    }
+
+    match /workflow_runs/{runId} {
+      allow get: if isSignedIn() && isValidId(runId) && (isOwnerDoc() || isAdmin());
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(runId) && isValidWorkflowRun(incoming());
+      allow update: if isSignedIn() && isValidId(runId) && isValidWorkflowRun(incoming()) && (
+        isAdmin() ||
+        (isOwnerDoc() &&
+         incoming().ownerId == existing().ownerId &&
+         incoming().startedAt == existing().startedAt &&
+         incoming().diff(existing()).affectedKeys().hasOnly(['articleId', 'currentStage', 'currentStageName', 'status', 'progressPercent', 'revisionRound', 'retryCount', 'errorMessage', 'submittedAt', 'completedAt']))
+      );
+      allow delete: if false;
+    }
+
+    match /workflow_stages/{stageId} {
+      allow get: if isSignedIn() && isValidId(stageId) && (isOwnerDoc() || isAdmin());
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(stageId) && isValidWorkflowStage(incoming());
+      allow update: if isSignedIn() && isValidId(stageId) && isValidWorkflowStage(incoming()) && (
+        isAdmin() ||
+        (isOwnerDoc() &&
+         incoming().ownerId == existing().ownerId &&
+         incoming().diff(existing()).affectedKeys().hasOnly(['status', 'outputSummary', 'detailsJson', 'inputReference', 'outputReference', 'errorMessage', 'retryCount', 'revisionCount', 'durationMs', 'startedAt', 'completedAt']))
+      );
+      allow delete: if false;
+    }
+
+    match /review_tasks/{taskId} {
+      allow get: if isSignedIn() && isValidId(taskId) && (isOwnerDoc() || isAdmin());
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(taskId) && isValidReviewTask(incoming());
+      allow update: if isSignedIn() && isValidId(taskId) && isValidReviewTask(incoming()) && (
+        isAdmin() ||
+        (isOwnerDoc() &&
+         incoming().ownerId == existing().ownerId &&
+         incoming().createdAt == existing().createdAt &&
+         incoming().diff(existing()).affectedKeys().hasOnly(['status', 'verificationStatus', 'reviewerNotes', 'reviewedBy', 'reviewedAt']))
+      );
+      allow delete: if false;
+    }
+
+    match /lifecycle_proposals/{proposalId} {
+      allow get: if isSignedIn() && isValidId(proposalId) && (isOwnerDoc() || isAdmin());
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(proposalId) && isValidLifecycleProposal(incoming());
+      allow update: if isSignedIn() && isValidId(proposalId) && isValidLifecycleProposal(incoming()) && (
+        isAdmin() ||
+        (isOwnerDoc() &&
+         incoming().ownerId == existing().ownerId &&
+         incoming().createdAt == existing().createdAt &&
+         incoming().diff(existing()).affectedKeys().hasOnly(['status', 'reviewedBy', 'reviewedAt', 'reason', 'diffSummary']))
+      );
+      allow delete: if false;
+    }
+
+    match /conversations/{conversationId} {
+      allow get: if isSignedIn() && isValidId(conversationId) && (isOwnerDoc() || isAdmin());
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(conversationId) && isValidConversation(incoming());
+      allow update: if isSignedIn() && isValidId(conversationId) && isValidConversation(incoming()) && (
+        isAdmin() ||
+        (isOwnerDoc() &&
+         incoming().ownerId == existing().ownerId &&
+         incoming().createdAt == existing().createdAt &&
+         incoming().diff(existing()).affectedKeys().hasOnly(['title', 'updatedAt']))
+      );
+      allow delete: if isSignedIn() && isValidId(conversationId) && (isOwnerDoc() || isAdmin());
+    }
+
+    match /chat_messages/{messageId} {
+      allow get: if isSignedIn() && isValidId(messageId) && (isOwnerDoc() || isAdmin());
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(messageId) && isValidChatMessage(incoming());
+      allow update: if isSignedIn() && isValidId(messageId) && isValidChatMessage(incoming()) && (
+        isAdmin() ||
+        (isOwnerDoc() &&
+         incoming().ownerId == existing().ownerId &&
+         incoming().createdAt == existing().createdAt &&
+         incoming().diff(existing()).affectedKeys().hasOnly(['feedback']))
+      );
+      allow delete: if false;
+    }
+
+    match /unanswered_questions/{questionId} {
+      allow get: if isSignedIn() && isValidId(questionId) && (isOwnerDoc() || isAdmin());
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(questionId) && isValidUnansweredQuestion(incoming());
+      allow update: if isSignedIn() && isValidId(questionId) && isValidUnansweredQuestion(incoming()) && (
+        isAdmin() ||
+        (isOwnerDoc() &&
+         incoming().ownerId == existing().ownerId &&
+         incoming().createdAt == existing().createdAt &&
+         incoming().diff(existing()).affectedKeys().hasOnly(['status', 'resolutionNotes', 'departmentSuggested']))
+      );
+      allow delete: if false;
+    }
+
+    match /audit_logs/{logId} {
+      allow get: if isSignedIn() && isValidId(logId) && (isOwnerDoc() || isAdmin());
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(logId) && isValidAuditLog(incoming());
+      allow update, delete: if false;
+    }
+
+    match /notifications/{notificationId} {
+      allow get: if isSignedIn() && isValidId(notificationId) && (isOwnerDoc() || isAdmin());
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(notificationId) && isValidNotificationItem(incoming());
+      allow update: if isSignedIn() && isValidId(notificationId) && isValidNotificationItem(incoming()) && (
+        isAdmin() ||
+        (isOwnerDoc() &&
+         incoming().ownerId == existing().ownerId &&
+         incoming().createdAt == existing().createdAt &&
+         incoming().diff(existing()).affectedKeys().hasOnly(['read']))
+      );
+      allow delete: if isSignedIn() && isValidId(notificationId) && (isOwnerDoc() || isAdmin());
+    }
+  }
+}

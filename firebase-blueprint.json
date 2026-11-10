@@ -1,0 +1,468 @@
+{
+  "entities": {
+    "Admin": {
+      "title": "Admin",
+      "description": "Platform administrator marker document",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "email": { "type": "string", "maxLength": 256 }
+      },
+      "required": ["uid", "email"]
+    },
+    "User": {
+      "title": "User",
+      "description": "Authenticated user profile and institutional onboarding state",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "fullName": { "type": "string", "maxLength": 150 },
+        "email": { "type": "string", "maxLength": 256 },
+        "role": { "type": "string", "maxLength": 64 },
+        "institutionId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "institutionName": { "type": "string", "maxLength": 200 },
+        "department": { "type": "string", "maxLength": 120 },
+        "onboardingCompleted": { "type": "boolean" },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["uid", "ownerId", "fullName", "email", "role", "institutionId", "onboardingCompleted", "createdAt"]
+    },
+    "Institution": {
+      "title": "Institution",
+      "description": "Educational institution workspace (Academy, School, College, University)",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "maxLength": 200 },
+        "type": { "type": "string", "enum": ["Academy", "School", "College", "University"], "maxLength": 32 },
+        "country": { "type": "string", "maxLength": 100 },
+        "website": { "type": "string", "maxLength": 300 },
+        "primaryDepartment": { "type": "string", "maxLength": 120 },
+        "isDemo": { "type": "boolean" },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "ownerId", "name", "type", "country", "isDemo", "createdAt"]
+    },
+    "WorkspaceMembership": {
+      "title": "WorkspaceMembership",
+      "description": "Associates a user with an institution and role",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "institutionId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "userId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "userEmail": { "type": "string", "maxLength": 256 },
+        "userName": { "type": "string", "maxLength": 150 },
+        "role": { "type": "string", "maxLength": 64 },
+        "department": { "type": "string", "maxLength": 120 },
+        "status": { "type": "string", "maxLength": 32 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "ownerId", "institutionId", "userId", "userEmail", "userName", "role", "status", "createdAt"]
+    },
+    "Department": {
+      "title": "Department",
+      "description": "Institutional department or faculty unit",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "institutionId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "maxLength": 120 },
+        "description": { "type": "string", "maxLength": 500 },
+        "headName": { "type": "string", "maxLength": 120 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "ownerId", "institutionId", "name", "createdAt"]
+    },
+    "DocumentRecord": {
+      "title": "DocumentRecord",
+      "description": "Uploaded institutional policy or notice document metadata",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "institutionId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "title": { "type": "string", "maxLength": 300 },
+        "fileName": { "type": "string", "maxLength": 300 },
+        "fileType": { "type": "string", "maxLength": 64 },
+        "fileSize": { "type": "number" },
+        "department": { "type": "string", "maxLength": 120 },
+        "category": { "type": "string", "maxLength": 120 },
+        "language": { "type": "string", "maxLength": 64 },
+        "effectiveDate": { "type": "string", "maxLength": 64 },
+        "expiryDate": { "type": "string", "maxLength": 64 },
+        "reviewDate": { "type": "string", "maxLength": 64 },
+        "version": { "type": "number" },
+        "status": { "type": "string", "maxLength": 64 },
+        "accessLevel": { "type": "string", "maxLength": 64 },
+        "extractedText": { "type": "string", "maxLength": 200000 },
+        "isSampleData": { "type": "boolean" },
+        "uploadedBy": { "type": "string", "maxLength": 150 },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "ownerId", "institutionId", "title", "fileName", "fileType", "department", "category", "version", "status", "accessLevel", "extractedText", "isSampleData", "uploadedBy", "createdAt"]
+    },
+    "DocumentVersion": {
+      "title": "DocumentVersion",
+      "description": "Historical version snapshot of an institutional document",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "institutionId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "documentId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "versionNumber": { "type": "number" },
+        "title": { "type": "string", "maxLength": 300 },
+        "extractedText": { "type": "string", "maxLength": 200000 },
+        "changeSummary": { "type": "string", "maxLength": 2000 },
+        "effectiveDate": { "type": "string", "maxLength": 64 },
+        "createdBy": { "type": "string", "maxLength": 150 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "ownerId", "institutionId", "documentId", "versionNumber", "title", "extractedText", "changeSummary", "createdBy", "createdAt"]
+    },
+    "KnowledgeChunk": {
+      "title": "KnowledgeChunk",
+      "description": "Semantic chunk and vector representation for RAG retrieval",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "institutionId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "documentId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "articleId": { "type": "string", "maxLength": 128 },
+        "documentTitle": { "type": "string", "maxLength": 300 },
+        "sectionTitle": { "type": "string", "maxLength": 300 },
+        "content": { "type": "string", "maxLength": 20000 },
+        "department": { "type": "string", "maxLength": 120 },
+        "category": { "type": "string", "maxLength": 120 },
+        "accessLevel": { "type": "string", "maxLength": 64 },
+        "isApproved": { "type": "boolean" },
+        "effectiveDate": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "ownerId", "institutionId", "documentId", "documentTitle", "sectionTitle", "content", "department", "category", "accessLevel", "isApproved", "createdAt"]
+    },
+    "KnowledgeArticle": {
+      "title": "KnowledgeArticle",
+      "description": "Structured institutional knowledge article created by AI Curator and governed by Human Reviewer",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "institutionId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "sourceDocumentId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "sourceDocumentTitle": { "type": "string", "maxLength": 300 },
+        "title": { "type": "string", "maxLength": 300 },
+        "summary": { "type": "string", "maxLength": 4000 },
+        "contentMarkdown": { "type": "string", "maxLength": 200000 },
+        "department": { "type": "string", "maxLength": 120 },
+        "category": { "type": "string", "maxLength": 120 },
+        "status": { "type": "string", "maxLength": 64 },
+        "verificationStatus": { "type": "string", "maxLength": 64 },
+        "version": { "type": "number" },
+        "effectiveDate": { "type": "string", "maxLength": 64 },
+        "expiryDate": { "type": "string", "maxLength": 64 },
+        "reviewDate": { "type": "string", "maxLength": 64 },
+        "accessLevel": { "type": "string", "maxLength": 64 },
+        "sourceReferences": { "type": "string", "maxLength": 5000 },
+        "faqsJson": { "type": "string", "maxLength": 50000 },
+        "verificationReportJson": { "type": "string", "maxLength": 50000 },
+        "isSampleData": { "type": "boolean" },
+        "createdBy": { "type": "string", "maxLength": 150 },
+        "approvedBy": { "type": "string", "maxLength": 150 },
+        "approvedAt": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "ownerId", "institutionId", "sourceDocumentId", "sourceDocumentTitle", "title", "summary", "contentMarkdown", "department", "category", "status", "verificationStatus", "version", "accessLevel", "isSampleData", "createdBy", "createdAt"]
+    },
+    "ArticleVersion": {
+      "title": "ArticleVersion",
+      "description": "Version snapshot of a knowledge article",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "institutionId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "articleId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "versionNumber": { "type": "number" },
+        "title": { "type": "string", "maxLength": 300 },
+        "contentMarkdown": { "type": "string", "maxLength": 200000 },
+        "changeNotes": { "type": "string", "maxLength": 2000 },
+        "status": { "type": "string", "maxLength": 64 },
+        "reviewerName": { "type": "string", "maxLength": 150 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "ownerId", "institutionId", "articleId", "versionNumber", "title", "contentMarkdown", "status", "createdAt"]
+    },
+    "WorkflowRun": {
+      "title": "WorkflowRun",
+      "description": "Execution trace of the 5-stage AI + Human Governance knowledge pipeline",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "institutionId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "documentId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "documentTitle": { "type": "string", "maxLength": 300 },
+        "articleId": { "type": "string", "maxLength": 128 },
+        "currentStage": { "type": "number" },
+        "currentStageName": { "type": "string", "maxLength": 120 },
+        "status": { "type": "string", "maxLength": 64 },
+        "progressPercent": { "type": "number" },
+        "revisionRound": { "type": "number" },
+        "retryCount": { "type": "number" },
+        "errorMessage": { "type": "string", "maxLength": 2000 },
+        "submittedAt": { "type": "string", "maxLength": 64 },
+        "startedAt": { "type": "string", "maxLength": 64 },
+        "completedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "ownerId", "institutionId", "documentId", "documentTitle", "currentStage", "currentStageName", "status", "progressPercent", "revisionRound", "startedAt"]
+    },
+    "WorkflowStage": {
+      "title": "WorkflowStage",
+      "description": "Individual stage execution output within a workflow run",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "institutionId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "runId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "stageNumber": { "type": "number" },
+        "stageName": { "type": "string", "maxLength": 120 },
+        "status": { "type": "string", "maxLength": 64 },
+        "outputSummary": { "type": "string", "maxLength": 20000 },
+        "detailsJson": { "type": "string", "maxLength": 100000 },
+        "inputReference": { "type": "string", "maxLength": 2000 },
+        "outputReference": { "type": "string", "maxLength": 2000 },
+        "errorMessage": { "type": "string", "maxLength": 2000 },
+        "retryCount": { "type": "number" },
+        "revisionCount": { "type": "number" },
+        "durationMs": { "type": "number" },
+        "startedAt": { "type": "string", "maxLength": 64 },
+        "completedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "ownerId", "institutionId", "runId", "stageNumber", "stageName", "status", "outputSummary", "startedAt"]
+    },
+    "ReviewTask": {
+      "title": "ReviewTask",
+      "description": "Stage 05 Human Governance review item",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "institutionId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "articleId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "documentId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "runId": { "type": "string", "maxLength": 128 },
+        "articleTitle": { "type": "string", "maxLength": 300 },
+        "department": { "type": "string", "maxLength": 120 },
+        "category": { "type": "string", "maxLength": 120 },
+        "verificationStatus": { "type": "string", "maxLength": 64 },
+        "status": { "type": "string", "maxLength": 64 },
+        "reviewerNotes": { "type": "string", "maxLength": 4000 },
+        "reviewedBy": { "type": "string", "maxLength": 150 },
+        "reviewedAt": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "ownerId", "institutionId", "articleId", "documentId", "articleTitle", "department", "category", "verificationStatus", "status", "createdAt"]
+    },
+    "LifecycleProposal": {
+      "title": "LifecycleProposal",
+      "description": "Knowledge lifecycle action recommendation (CREATE, KEEP, UPDATE, RETIRE)",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "institutionId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "articleId": { "type": "string", "maxLength": 128 },
+        "documentId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "targetTitle": { "type": "string", "maxLength": 300 },
+        "department": { "type": "string", "maxLength": 120 },
+        "actionType": { "type": "string", "enum": ["CREATE", "KEEP", "UPDATE", "RETIRE"], "maxLength": 32 },
+        "reason": { "type": "string", "maxLength": 4000 },
+        "diffSummary": { "type": "string", "maxLength": 20000 },
+        "oldVersionText": { "type": "string", "maxLength": 100000 },
+        "newVersionText": { "type": "string", "maxLength": 100000 },
+        "status": { "type": "string", "maxLength": 64 },
+        "reviewedBy": { "type": "string", "maxLength": 150 },
+        "reviewedAt": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "ownerId", "institutionId", "documentId", "targetTitle", "department", "actionType", "reason", "status", "createdAt"]
+    },
+    "Conversation": {
+      "title": "Conversation",
+      "description": "Knowledge Assistant conversation session",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "institutionId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "userId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "title": { "type": "string", "maxLength": 300 },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "ownerId", "institutionId", "userId", "title", "createdAt"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "Message in a Knowledge Assistant RAG conversation",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "institutionId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "conversationId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "role": { "type": "string", "enum": ["user", "assistant"], "maxLength": 32 },
+        "content": { "type": "string", "maxLength": 50000 },
+        "citationsJson": { "type": "string", "maxLength": 20000 },
+        "feedback": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "ownerId", "institutionId", "conversationId", "role", "content", "createdAt"]
+    },
+    "UnansweredQuestion": {
+      "title": "UnansweredQuestion",
+      "description": "Student or teacher query that lacked verified approved coverage",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "institutionId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "question": { "type": "string", "maxLength": 2000 },
+        "askedByRole": { "type": "string", "maxLength": 64 },
+        "departmentSuggested": { "type": "string", "maxLength": 120 },
+        "status": { "type": "string", "maxLength": 64 },
+        "resolutionNotes": { "type": "string", "maxLength": 2000 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "ownerId", "institutionId", "question", "askedByRole", "status", "createdAt"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Audit trail entry for AI agent and human governance operations",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "institutionId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "actorName": { "type": "string", "maxLength": 150 },
+        "actorType": { "type": "string", "maxLength": 64 },
+        "action": { "type": "string", "maxLength": 200 },
+        "targetType": { "type": "string", "maxLength": 64 },
+        "targetId": { "type": "string", "maxLength": 128 },
+        "targetTitle": { "type": "string", "maxLength": 300 },
+        "previousStatus": { "type": "string", "maxLength": 64 },
+        "newStatus": { "type": "string", "maxLength": 64 },
+        "reason": { "type": "string", "maxLength": 2000 },
+        "workflowRunId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "ownerId", "institutionId", "actorName", "actorType", "action", "targetType", "targetId", "targetTitle", "createdAt"]
+    },
+    "NotificationItem": {
+      "title": "NotificationItem",
+      "description": "System and governance notification for workspace members",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "institutionId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "title": { "type": "string", "maxLength": 200 },
+        "message": { "type": "string", "maxLength": 1000 },
+        "type": { "type": "string", "maxLength": 64 },
+        "read": { "type": "boolean" },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "ownerId", "institutionId", "title", "message", "type", "read", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/admins/{adminId}": {
+      "schema": "Admin",
+      "description": "Platform admin lookup records"
+    },
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles and onboarding state"
+    },
+    "/institutions/{institutionId}": {
+      "schema": "Institution",
+      "description": "Institutional workspaces"
+    },
+    "/workspace_memberships/{membershipId}": {
+      "schema": "WorkspaceMembership",
+      "description": "User memberships in institutional workspaces"
+    },
+    "/departments/{departmentId}": {
+      "schema": "Department",
+      "description": "Institutional departments"
+    },
+    "/documents/{documentId}": {
+      "schema": "DocumentRecord",
+      "description": "Uploaded institutional policy documents"
+    },
+    "/document_versions/{versionId}": {
+      "schema": "DocumentVersion",
+      "description": "Document version history"
+    },
+    "/knowledge_chunks/{chunkId}": {
+      "schema": "KnowledgeChunk",
+      "description": "Chunked document text for RAG"
+    },
+    "/knowledge_articles/{articleId}": {
+      "schema": "KnowledgeArticle",
+      "description": "AI-generated and human-approved knowledge articles"
+    },
+    "/article_versions/{versionId}": {
+      "schema": "ArticleVersion",
+      "description": "Knowledge article version history"
+    },
+    "/workflow_runs/{runId}": {
+      "schema": "WorkflowRun",
+      "description": "5-stage workflow execution runs"
+    },
+    "/workflow_stages/{stageId}": {
+      "schema": "WorkflowStage",
+      "description": "Individual stage records for workflow runs"
+    },
+    "/review_tasks/{taskId}": {
+      "schema": "ReviewTask",
+      "description": "Human review governance queue"
+    },
+    "/lifecycle_proposals/{proposalId}": {
+      "schema": "LifecycleProposal",
+      "description": "CREATE, KEEP, UPDATE, and RETIRE lifecycle proposals"
+    },
+    "/conversations/{conversationId}": {
+      "schema": "Conversation",
+      "description": "Knowledge assistant chat conversations"
+    },
+    "/chat_messages/{messageId}": {
+      "schema": "ChatMessage",
+      "description": "Messages in Knowledge Assistant conversations"
+    },
+    "/unanswered_questions/{questionId}": {
+      "schema": "UnansweredQuestion",
+      "description": "Questions without verified institutional knowledge coverage"
+    },
+    "/audit_logs/{logId}": {
+      "schema": "AuditLog",
+      "description": "Institutional governance and agent audit trail"
+    },
+    "/notifications/{notificationId}": {
+      "schema": "NotificationItem",
+      "description": "Workspace notifications"
+    }
+  }
+}

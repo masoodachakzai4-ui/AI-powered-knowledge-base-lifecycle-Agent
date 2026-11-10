@@ -1,0 +1,1233 @@
+# MASTER DEVELOPMENT PROMPT
+# AI-POWERED EDUCATIONAL KNOWLEDGE BASE LIFECYCLE AGENT
+
+Act as a senior full-stack software architect, AI engineer, backend developer, database architect, security engineer, and professional enterprise UI/UX designer.
+
+I want you to BUILD a complete, functional, professional, production-style web application named:
+
+**AI-Powered Educational Knowledge Base Lifecycle Agent**
+
+This is an intelligent educational knowledge management platform designed for Academies, Schools, Colleges, and Universities.
+
+The application must manage institutional knowledge throughout its entire lifecycle: collecting documents, extracting information, organizing knowledge, generating knowledge articles, verifying information, human approval, publishing, monitoring, updating, and retiring outdated knowledge.
+
+IMPORTANT:
+I do not want only a chatbot, static dashboard, or UI mockup.
+
+I want a complete application with a functional frontend, backend, database, authentication, file storage, AI agent workflow, knowledge assistant, and human review system.
+
+Build the actual application, connect its components, test the features, and provide clear setup instructions.
+
+---
+
+# 1. PROJECT VISION AND OBJECTIVES
+
+Educational institutions manage hundreds of documents and regularly face problems such as:
+
+- Students cannot easily find admission information.
+- Students repeatedly ask about fee structures.
+- Teachers need quick access to academic policies.
+- Students do not know examination rules.
+- University notices become outdated.
+- Scholarship information is difficult to locate.
+- Staff spend time answering questions that already have documented answers.
+- Old policies may remain available after new policies are introduced.
+- Different departments maintain separate information.
+
+Our platform should solve these problems through AI-powered knowledge management.
+
+The system should provide one centralized and searchable knowledge platform for an educational institution.
+
+It should support three institution types:
+
+1. Academy
+2. School
+3. College / University
+
+During onboarding, administrators should select their institution type.
+
+The platform should adapt its categories and terminology according to the selected institution.
+
+Do not include customer support ticket analytics or the old PS-03 support-ticket workflow. This is a separate educational knowledge management project.
+
+# 2. TECHNOLOGY STACK
+
+Use the following technology architecture.
+
+## Frontend
+
+- React.js
+- TypeScript
+- Tailwind CSS
+- React Router
+- Reusable UI components
+- Lucide icons
+- Recharts for operational dashboard visualizations
+
+## Backend
+
+Use the Google AI Studio native full-stack web application architecture:
+
+- Node.js server-side runtime
+- Secure server-side API routes
+- Service-based application architecture
+- Server-side Gemini API integration
+- Firebase Admin SDK where appropriate
+
+Do not expose API keys or administrative credentials in frontend code.
+
+## Database
+
+Use Firebase:
+
+- Cloud Firestore for application data.
+- Firebase Authentication for user authentication.
+- Firebase Security Rules for access control.
+- Cloud Storage for Firebase for original documents, when configured.
+
+## AI
+
+- Google Gemini API for language understanding and generation.
+- Gemini Embeddings for semantic document search.
+- Function calling for structured agent operations.
+- Retrieval-Augmented Generation (RAG) for the Knowledge Assistant.
+
+Keep AI model configuration centralized and replaceable.
+
+## Important Google AI Studio Requirement
+
+This project is being built in Google AI Studio Build Mode.
+
+Use its React frontend and Node.js server runtime.
+
+When database or authentication integration is required, request the Firebase integration and use the actual connected Firebase project.
+
+Generate a proper service layer rather than putting database queries and Gemini calls directly inside UI components.
+
+If Firebase Storage requires additional billing or configuration, explain this clearly. Do not pretend persistent document storage is working before it is configured.
+
+If a service is not configured, provide a labelled demo mode and clear setup instructions.
+
+# 3. PROFESSIONAL UI/UX DESIGN
+
+Create a premium, modern educational enterprise SaaS dashboard.
+
+The user interface is extremely important.
+
+The application should look like a professional product that can be presented to university professors, institutional administrators, and hackathon judges.
+
+## Visual Design
+
+Use:
+
+- Deep navy sidebar.
+- Clean white content surfaces.
+- Light blue and subtle teal accent colors.
+- Professional typography.
+- Consistent spacing.
+- Rounded cards.
+- Subtle shadows.
+- Clear tables.
+- Beautiful charts.
+- Modern icons.
+- Smooth, subtle interactions.
+- Responsive layouts for desktop, tablet, and mobile.
+
+Use a consistent typography system such as Plus Jakarta Sans or Inter.
+
+Avoid:
+- Cluttered dashboards.
+- Excessive animations.
+- Too many unnecessary cards.
+- Fake statistics.
+- Decorative buttons that do nothing.
+- Technical language without explanations.
+
+Use meaningful empty states that explain what the user should do next.
+
+## Main Sidebar Navigation
+
+Create these sections:
+
+1. Dashboard
+2. Knowledge Assistant
+3. Document Upload
+4. Knowledge Library
+5. AI Processing Workflow
+6. Human Review Workspace
+7. Lifecycle Management
+8. Unanswered Questions
+9. Audit History
+10. User Management
+11. Settings
+
+Highlight the active navigation item.
+
+Show the institution logo, institution name, workspace selector, notifications, and user profile.
+
+# 4. PUBLIC LANDING PAGE
+
+Create a professional public landing page.
+
+Main heading:
+
+"Your Institution's Knowledge, Organized and Always Up to Date."
+
+Subtitle:
+
+"An AI-powered educational knowledge platform that helps students, teachers, and administrators find accurate information while keeping institutional knowledge updated."
+
+Include:
+
+- Get Started button.
+- Sign In button.
+- Product overview.
+- Main features.
+- Four AI agents introduction.
+- Human approval explanation.
+- Knowledge lifecycle explanation.
+- Security and governance overview.
+
+Provide a clear demonstration of how the platform works.
+
+# 5. NEW USER REGISTRATION AND ONBOARDING
+
+Create a separate onboarding experience for new users.
+
+## Step 1: Create Account
+
+Provide:
+- Full name.
+- Email.
+- Password.
+- Confirm password.
+- Institution name.
+
+Use Firebase Authentication.
+
+## Step 2: Institution Setup
+
+Ask the administrator to select:
+
+- Academy
+- School
+- College
+- University
+
+Collect:
+- Institution name.
+- Institution type.
+- Department or faculty.
+- Country.
+- Institution website (optional).
+
+## Step 3: Workspace Setup
+
+Create an institution-specific workspace.
+
+Allow an administrator to configure departments:
+
+- Admissions.
+- Academics.
+- Examinations.
+- Finance.
+- Scholarships.
+- Student Affairs.
+- Library.
+- Hostel.
+- Transport.
+- Information Technology.
+
+Allow departments to be customized.
+
+## Step 4: User Role
+
+Support these roles:
+
+- Platform Administrator.
+- Institution Administrator.
+- Knowledge Manager.
+- Human Reviewer.
+- Teacher / Faculty Member.
+- Student.
+- Parent / Guardian (optional).
+
+Each role must have suitable permissions.
+
+## Step 5: Guided Setup
+
+Show a getting-started checklist:
+
+1. Complete institution profile.
+2. Configure departments.
+3. Upload institutional documents.
+4. Process documents with AI.
+5. Review generated knowledge.
+6. Publish approved knowledge.
+7. Start using the Knowledge Assistant.
+
+After onboarding, redirect the user to the dashboard.
+
+## Returning Users
+
+When an existing user signs in:
+
+- Restore the previous workspace.
+- Display existing documents.
+- Show published knowledge articles.
+- Display pending reviews.
+- Show the previous workflow history.
+- Restore available assistant conversation history.
+- Show upcoming document reviews.
+
+Do not force returning users to repeat onboarding.
+
+# 6. FOUR AI AGENTS + HUMAN REVIEW
+
+This is the central workflow of the application.
+
+The application must have FOUR AI agents and ONE separate Human Reviewer.
+
+The Human Reviewer is NOT an AI agent.
+
+Create a clear visual Five-Stage Workflow.
+
+## STAGE 01 — ORCHESTRATOR AGENT
+
+Role: Workflow Manager.
+
+Responsibilities:
+
+- Coordinate the entire knowledge lifecycle.
+- Start a knowledge processing run.
+- Validate uploaded documents.
+- Check required configurations.
+- Create an execution plan.
+- Assign tasks to other agents.
+- Track agent execution.
+- Maintain processing state.
+- Handle errors.
+- Retry transient failed operations only once where appropriate.
+- Log every important action.
+
+Show:
+- Run ID.
+- Current processing stage.
+- Execution status.
+- Start time.
+- Completion time.
+- Call usage where available.
+- Error messages.
+
+The Orchestrator must ensure stages execute in the correct order.
+
+## STAGE 02 — KNOWLEDGE INTAKE AND ORGANIZER AGENT
+
+Role: Document Understanding and Classification.
+
+Responsibilities:
+
+1. Receive uploaded institutional documents.
+2. Extract text from PDF files.
+3. Extract text from DOCX files.
+4. Read TXT files.
+5. Support CSV or other structured files where relevant.
+6. Identify document language.
+7. Identify the document category.
+8. Extract document title.
+9. Extract effective date.
+10. Extract expiry or review date when available.
+11. Identify department.
+12. Detect duplicate documents.
+13. Identify potentially outdated versions.
+14. Divide document content into meaningful chunks.
+15. Generate semantic embeddings.
+16. Save document metadata and searchable content.
+
+Supported education document categories:
+
+- Admission Policies.
+- Fee Structures.
+- Scholarship Policies.
+- Academic Calendars.
+- Examination Rules.
+- Attendance Policies.
+- Course Information.
+- Timetables.
+- Student Handbooks.
+- Faculty Guidelines.
+- Library Rules.
+- Hostel Policies.
+- Transport Information.
+- Campus Rules.
+- Student Affairs.
+- IT Guidelines.
+
+Allow administrators to create custom categories.
+
+Important:
+If a PDF is scanned and text cannot be extracted, identify it as requiring OCR. Do not pretend the document was successfully processed.
+
+## STAGE 03 — KNOWLEDGE CURATOR AND AUTHOR AGENT
+
+Role: Knowledge Creation.
+
+After the Organizer completes its task, this agent receives the extracted and classified information.
+
+Responsibilities:
+
+- Convert institutional information into structured knowledge.
+- Generate clear knowledge articles.
+- Create frequently asked questions.
+- Create short summaries.
+- Organize rules and procedures.
+- Preserve original dates, numbers, conditions, and policy wording.
+- Add department and category information.
+- Link every article to its original source document.
+- Include page or section references where available.
+- Identify information that requires clarification.
+
+Example:
+
+Uploaded Document:
+University Admission Policy 2026.
+
+Generated Knowledge Article:
+
+Title:
+"University Admission Requirements 2026"
+
+Sections:
+- Eligibility Criteria.
+- Required Documents.
+- Application Procedure.
+- Application Deadline.
+- Fee Information.
+- Contact Department.
+- Original Source References.
+
+Every AI-generated knowledge article must have the status:
+
+AI-SUGGESTED / DRAFT.
+
+Never invent university policies, fees, dates, deadlines, examination rules, or official decisions.
+
+If information is missing, mark it as unavailable.
+
+## STAGE 04 — KNOWLEDGE VERIFIER AGENT
+
+Role: Accuracy and Quality Control.
+
+This stage is extremely important.
+
+Responsibilities:
+
+- Compare generated articles with original documents.
+- Verify dates and deadlines.
+- Check numerical values.
+- Check fee amounts.
+- Check scholarship amounts.
+- Check academic requirements.
+- Verify that the article does not introduce unsupported claims.
+- Check references and source locations.
+- Identify outdated information.
+- Identify conflicting policies.
+- Detect missing information.
+- Check whether access permissions are appropriate.
+
+Generate a verification report containing:
+
+- Article title.
+- Verification status.
+- Source documents.
+- Verified statements.
+- Unsupported statements.
+- Missing information.
+- Conflicting information.
+- Review warnings.
+
+If an issue is found:
+
+1. Return the article to Knowledge Curator.
+2. Explain the exact problem.
+3. Allow a maximum of TWO revision rounds.
+4. Verify the corrected article again.
+5. If unresolved, mark it ACTION REQUIRED.
+
+Do not hide verification problems.
+
+Do not guarantee zero hallucinations. Instead, make the system evidence-grounded and transparent about uncertainty.
+
+## STAGE 05 — HUMAN REVIEWER
+
+This is a human governance stage, not an AI agent.
+
+The Human Reviewer must receive:
+
+- AI-generated article.
+- Original source document.
+- Verification report.
+- Extracted information.
+- Warnings and conflicts.
+- Revision history.
+
+Provide four actions:
+
+1. Approve.
+2. Reject.
+3. Request Changes.
+4. Save as Pending.
+
+After approval:
+
+- Publish the article.
+- Add its approved version to the Knowledge Library.
+- Make it available to authorized users.
+- Record the reviewer, date, and approval decision.
+
+Never publish an AI-generated article automatically.
+
+Never allow an unapproved article to appear in the normal user-facing Knowledge Assistant.
+
+# 7. COMPLETE WORKFLOW VISUALIZATION
+
+Create a professional workflow page.
+
+Show this process clearly:
+
+DOCUMENT UPLOAD
+        ↓
+STAGE 01: ORCHESTRATOR
+        ↓
+STAGE 02: KNOWLEDGE INTAKE & ORGANIZER
+        ↓
+STAGE 03: KNOWLEDGE CURATOR & AUTHOR
+        ↓
+STAGE 04: KNOWLEDGE VERIFIER
+        ↓
+STAGE 05: HUMAN REVIEW
+        ↓
+APPROVED KNOWLEDGE LIBRARY
+        ↓
+KNOWLEDGE ASSISTANT
+
+The Author and Verifier must have a visible revision loop.
+
+The workflow interface must clearly distinguish:
+
+AUTOMATED AI PROCESSING — STAGES 01–04
+
+HUMAN GOVERNANCE — STAGE 05
+
+Display these execution states:
+
+- Not Started.
+- Queued.
+- Running.
+- Completed.
+- Revision Required.
+- Retrying.
+- Action Required.
+- Waiting for Human Approval.
+- Approved.
+- Rejected.
+- Failed.
+
+When a workflow starts:
+
+- Stage 01 executes first.
+- Stage 02 begins only after Stage 01 completes.
+- Stage 03 begins only after Stage 02 completes.
+- Stage 04 begins only after Stage 03 completes.
+- Stage 05 receives the actual results after verification.
+
+Do not simulate execution using frontend timers.
+
+Use real backend results, timestamps, and persisted workflow events.
+
+# 8. KNOWLEDGE ASSISTANT
+
+Create a dedicated AI chat interface.
+
+It must be easy for students, teachers, and staff to use.
+
+The assistant should answer questions based on approved institutional knowledge.
+
+Example student questions:
+
+1. What are the admission requirements?
+2. What documents are required for admission?
+3. What is the examination policy?
+4. What are the attendance requirements?
+5. How can I apply for a scholarship?
+6. What is the university fee structure?
+7. What is the library timing?
+8. What is the hostel admission procedure?
+9. What is the academic calendar?
+10. How can I contact the admissions department?
+
+## RAG Architecture
+
+Implement Retrieval-Augmented Generation.
+
+The process must be:
+
+1. User asks a question.
+2. Backend receives the question.
+3. Generate question embeddings.
+4. Retrieve relevant approved knowledge chunks.
+5. Apply user permission filters.
+6. Pass relevant retrieved content to Gemini.
+7. Generate an evidence-based answer.
+8. Display source references.
+
+Every answer should provide:
+
+- Clear answer.
+- Related knowledge article.
+- Original document title.
+- Relevant page or section.
+- Effective date, when available.
+
+When no relevant information exists, respond:
+
+"I could not find verified information about this question in the institution's approved knowledge base. Please contact the relevant department."
+
+Never invent an institutional answer.
+
+Allow users to provide feedback:
+- Helpful.
+- Not Helpful.
+- Report Incorrect Information.
+
+Create an Unanswered Questions section for administrators.
+
+## Separate Assistant From Lifecycle Agents
+
+The Knowledge Assistant is a user-facing RAG feature.
+
+It is not an additional stage in the five-stage document processing workflow.
+
+# 9. KNOWLEDGE LIBRARY
+
+Create a professional searchable Knowledge Library.
+
+Each knowledge article must display:
+
+- Article title.
+- Short description.
+- Department.
+- Category.
+- Source document.
+- Approval status.
+- Version number.
+- Effective date.
+- Expiry or review date, if available.
+- Last updated date.
+- Created by.
+- Approved by.
+
+Provide:
+- Search.
+- Category filters.
+- Department filters.
+- Version filters.
+- Status filters.
+- Date filters.
+
+Create an article detail page.
+
+Users must be able to view the original source and relevant source sections according to their permissions.
+
+# 10. KNOWLEDGE LIFECYCLE MANAGEMENT
+
+This is the defining feature of the project.
+
+The platform should continuously manage approved institutional knowledge.
+
+Support these lifecycle actions:
+
+## CREATE
+
+Create knowledge from newly uploaded institutional documents.
+
+## KEEP
+
+Recommend KEEP when:
+
+- The current article remains accurate.
+- The source policy has not been replaced.
+- The information is still applicable.
+- The review date has not indicated a required change.
+
+## UPDATE
+
+Recommend UPDATE when:
+
+- A new document version is uploaded.
+- Fee amounts change.
+- Academic dates change.
+- Admission deadlines change.
+- Examination rules change.
+- Scholarship conditions change.
+- The original information is incomplete or superseded.
+
+Compare the old and new document versions.
+
+Show exactly what changed.
+
+## RETIRE
+
+Recommend RETIRE when:
+
+- A policy has expired.
+- An old notice has been replaced.
+- A programme is no longer offered.
+- A rule is no longer applicable.
+- A document is explicitly withdrawn.
+
+Never permanently delete previous knowledge.
+
+Keep archived versions and historical records.
+
+All important lifecycle decisions must be proposals.
+
+A Human Reviewer must approve an update or retirement action before it becomes effective.
+
+Include a review schedule for documents with upcoming review or expiry dates.
+
+# 11. DOCUMENT VERSION CONTROL
+
+Implement version control.
+
+Example:
+
+Admission Policy:
+- Version 1 — Original Policy.
+- Version 2 — Updated Application Deadline.
+- Version 3 — Revised Eligibility Requirements.
+
+Show:
+
+- Old document.
+- New document.
+- Version comparison.
+- Changed sections.
+- Effective dates.
+- Reviewer decision.
+- Approval date.
+
+Old versions must remain accessible to authorized administrators.
+
+The Knowledge Assistant must use the currently approved and effective version by default.
+
+Do not answer using retired or superseded policies unless the user explicitly requests historical information and has permission to access it.
+
+# 12. ADMIN DASHBOARD
+
+Create a professional executive dashboard.
+
+Display real operational metrics:
+
+- Total Documents.
+- Published Knowledge Articles.
+- Pending Reviews.
+- Documents Being Processed.
+- Documents Requiring Updates.
+- Expired Documents.
+- Unanswered Questions.
+- Recent AI Workflow Runs.
+
+Create visual sections:
+
+- Knowledge Distribution by Department.
+- Knowledge Distribution by Category.
+- Document Lifecycle Status.
+- Recent Uploads.
+- Recent Approvals.
+- Pending Reviews.
+- Upcoming Document Review Dates.
+- Recent Assistant Questions.
+
+Only show actual saved database information.
+
+For an empty workspace, display zero values and useful onboarding instructions.
+
+Do not present synthetic demo information as real institutional data.
+
+# 13. USER MANAGEMENT AND ACCESS CONTROL
+
+Implement role-based access control.
+
+## Platform Administrator
+
+Can manage platform-level settings and institutions.
+
+## Institution Administrator
+
+Can:
+- Manage the institution workspace.
+- Add departments.
+- Invite users.
+- Assign roles.
+- Manage documents.
+- Configure permissions.
+
+## Knowledge Manager
+
+Can:
+- Upload documents.
+- Process knowledge.
+- Generate articles.
+- Monitor lifecycle proposals.
+
+## Human Reviewer
+
+Can:
+- View drafts.
+- Examine verification reports.
+- Approve or reject.
+- Request revisions.
+
+## Teacher / Faculty
+
+Can:
+- Search permitted institutional knowledge.
+- Ask questions.
+- View faculty-level documents.
+- Report outdated information.
+
+## Student
+
+Can:
+- Access student-authorized knowledge.
+- Ask institutional questions.
+- View approved public student policies.
+
+## Parent / Guardian (Optional)
+
+Can access only information explicitly authorized for their role.
+
+Enforce all permissions in the backend and Firebase Security Rules.
+
+Do not rely only on hiding buttons in the frontend.
+
+# 14. DATABASE DESIGN
+
+Use Cloud Firestore.
+
+Create logical collections:
+
+1. institutions
+2. users
+3. workspace_memberships
+4. departments
+5. documents
+6. document_versions
+7. knowledge_chunks
+8. knowledge_articles
+9. article_versions
+10. workflow_runs
+11. workflow_stages
+12. review_tasks
+13. lifecycle_proposals
+14. conversations
+15. chat_messages
+16. unanswered_questions
+17. audit_logs
+18. notifications
+
+Every institution's records must be associated with its institution ID.
+
+Implement tenant isolation so one institution cannot access another institution's private records.
+
+Store original documents in Cloud Storage when configured.
+
+Store document metadata and knowledge records in Firestore.
+
+Use Gemini embeddings and Firestore vector search for semantic retrieval.
+
+Generate the embeddings using the configured Gemini embedding model. Firestore stores and searches the vectors; it does not generate them.
+
+Create the required Firestore vector indexes and provide deployment instructions.
+
+# 15. BACKEND ARCHITECTURE AND API
+
+Use the Google AI Studio Node.js server runtime.
+
+Create modular services:
+
+- Authentication Service.
+- Institution Service.
+- User and Role Service.
+- Document Upload Service.
+- Document Extraction Service.
+- Knowledge Processing Service.
+- Embedding Service.
+- Retrieval Service.
+- Gemini AI Service.
+- Agent Orchestration Service.
+- Human Review Service.
+- Lifecycle Management Service.
+- Audit Logging Service.
+
+Create suitable REST endpoints:
+
+GET /api/health
+
+GET /api/institutions
+
+POST /api/institutions
+
+GET /api/dashboard/summary
+
+POST /api/documents
+
+GET /api/documents
+
+GET /api/documents/:documentId
+
+POST /api/documents/:documentId/process
+
+GET /api/workflow-runs
+
+POST /api/workflow-runs
+
+GET /api/workflow-runs/:runId
+
+GET /api/knowledge/articles
+
+GET /api/knowledge/articles/:articleId
+
+POST /api/knowledge/articles/:articleId/approve
+
+POST /api/knowledge/articles/:articleId/reject
+
+POST /api/knowledge/articles/:articleId/request-changes
+
+POST /api/assistant/query
+
+GET /api/lifecycle/proposals
+
+POST /api/lifecycle/proposals/:proposalId/approve
+
+POST /api/lifecycle/proposals/:proposalId/reject
+
+GET /api/audit-logs
+
+GET /api/notifications
+
+Use proper request validation, error handling, logging, pagination, and server-side authorization.
+
+Create a clear project folder structure.
+
+Keep frontend, server routes, agents, Firebase services, and shared types organized in separate modules.
+
+# 16. SECURITY AND PRIVACY
+
+Educational institutions may handle information about minors and students.
+
+Build the application with privacy and access control in mind.
+
+- Protect Gemini API keys.
+- Keep server credentials out of the frontend.
+- Verify authenticated users on every protected backend endpoint.
+- Enforce institution-level access.
+- Enforce role-based document permissions.
+- Validate uploaded file types and file sizes.
+- Use secure Firebase Storage rules.
+- Do not expose private student information in public answers.
+- Do not ingest grades, personal records, disciplinary records, or other sensitive student information unless an institution explicitly configures and authorizes that use.
+- Avoid storing unnecessary personal data.
+- Record administrative actions in the audit log.
+- Use safe error messages.
+
+Generate secure Firestore and Storage Security Rules.
+
+Never use unrestricted public database access in production.
+
+# 17. AUDIT LOGGING
+
+Every important action must be recorded.
+
+Record:
+
+- User or agent name.
+- Institution ID.
+- Action.
+- Related document or article.
+- Previous status.
+- New status.
+- Timestamp.
+- Reason.
+- Verification report reference.
+- Reviewer decision.
+- Workflow execution ID.
+
+Create an Audit History page with search and filters.
+
+Do not claim logs are immutable unless tamper-resistant storage has actually been implemented.
+
+# 18. NEW USER DEMO MODE
+
+Create a clearly labelled Demo Institution.
+
+Example:
+
+"Demo University — Sample Workspace"
+
+Include synthetic sample educational documents such as:
+
+- Sample Admission Policy.
+- Sample Academic Calendar.
+- Sample Fee Policy.
+- Sample Scholarship Guidelines.
+- Sample Library Rules.
+
+IMPORTANT:
+
+Clearly mark all synthetic documents:
+
+"SAMPLE DEMO DATA — NOT OFFICIAL INSTITUTIONAL POLICY."
+
+Do not invent real university rules, fees, deadlines, or official policy information.
+
+Allow a new user to:
+1. Open the sample workspace.
+2. Process sample documents.
+3. Explore the four AI agents.
+4. Review generated articles.
+5. Approve sample articles.
+6. Ask questions in the Knowledge Assistant.
+7. Test document version comparison.
+8. Explore KEEP, UPDATE, and RETIRE proposals.
+
+Demo mode must not pretend that real institutional documents have been uploaded.
+
+# 19. LIVE WORKFLOW MONITORING
+
+Build a professional workflow execution interface.
+
+Show the five stages sequentially:
+
+01. Orchestrator.
+02. Knowledge Intake and Organizer.
+03. Knowledge Curator and Author.
+04. Knowledge Verifier.
+05. Human Reviewer.
+
+Display:
+
+- Run ID.
+- Current stage.
+- Queue status.
+- Progress percentage.
+- Execution start time.
+- Execution finish time.
+- Actual stage results.
+- Errors.
+- Revision round.
+- Approval status.
+
+Use actual saved backend events.
+
+Use real polling or a supported streaming mechanism.
+
+Refresh the page without losing execution history.
+
+Do not use artificial timers or fake green success messages.
+
+If a stage fails, preserve the error and show how the user can resolve it.
+
+# 20. EDUCATIONAL QUESTION EXAMPLES
+
+Provide example questions inside the Knowledge Assistant.
+
+Admissions:
+"What are the admission requirements?"
+
+Fees:
+"What is the current fee structure?"
+
+Scholarships:
+"What documents are required for a scholarship?"
+
+Examinations:
+"What are the examination rules?"
+
+Attendance:
+"What is the minimum attendance requirement?"
+
+Academics:
+"Show me the academic calendar."
+
+Library:
+"What are the library opening hours?"
+
+Hostel:
+"What is the hostel application procedure?"
+
+Only answer from approved institutional information.
+
+# 21. RESPONSIVE AND ACCESSIBLE DESIGN
+
+The complete application must work on:
+
+- Desktop.
+- Laptop.
+- Tablet.
+- Mobile.
+
+Use readable font sizes.
+
+Make navigation understandable.
+
+Show clear labels.
+
+Use sufficient color contrast.
+
+Provide loading indicators, empty states, success messages, and useful error messages.
+
+Every visible button must perform a real action.
+
+Every form must validate its inputs.
+
+Do not add decorative or non-functional UI controls.
+
+# 22. REQUIRED TESTING
+
+Before considering the project complete, test the complete application.
+
+TEST 1: New User
+
+- Register a user.
+- Create an institution.
+- Complete onboarding.
+- Enter the dashboard.
+
+TEST 2: Document Upload
+
+- Upload a sample PDF.
+- Upload a DOCX.
+- Extract text.
+- Detect its category.
+- Save metadata.
+
+TEST 3: Agent Workflow
+
+- Run the Orchestrator.
+- Execute Knowledge Intake and Organizer.
+- Execute Knowledge Curator and Author.
+- Execute Knowledge Verifier.
+- Send the result to Human Review.
+
+Verify that every stage receives the actual output of its previous stage.
+
+TEST 4: Human Approval
+
+- Open a generated article.
+- Review its original source.
+- Check verification results.
+- Approve an article.
+- Confirm that it appears in the published Knowledge Library.
+
+TEST 5: Knowledge Assistant
+
+Ask:
+
+"What are the admission requirements?"
+
+Verify that the answer is retrieved from an approved source.
+
+Check that the original document title and section references are displayed.
+
+Ask a question that is not covered by the knowledge base.
+
+Verify that the Assistant admits that no verified answer is available.
+
+TEST 6: Lifecycle Update
+
+- Upload a new version of an existing policy.
+- Compare its old and new versions.
+- Detect changes.
+- Generate an UPDATE proposal.
+- Send it for human review.
+- Confirm that the old version is preserved.
+
+TEST 7: Security
+
+- Check that students cannot access admin-only documents.
+- Check that one institution cannot access another institution's private workspace.
+- Check that Gemini API keys are not visible in browser code.
+
+TEST 8: Persistence
+
+- Refresh the browser.
+- Sign out and sign in again.
+- Verify that approved articles, uploaded documents, conversations, and workflow history remain available.
+
+# 23. DEVELOPMENT AND DELIVERY REQUIREMENTS
+
+Build the actual application, not just a proposal.
+
+Work in these development stages:
+
+PHASE 1:
+Create the frontend, navigation, landing page, login, onboarding, and dashboard.
+
+PHASE 2:
+Connect Firebase Authentication, Firestore, and document storage.
+
+PHASE 3:
+Implement document uploading, extraction, classification, and knowledge organization.
+
+PHASE 4:
+Implement the four AI agents and their sequential workflow.
+
+PHASE 5:
+Implement the Human Review Workspace and approval controls.
+
+PHASE 6:
+Implement the RAG-based Knowledge Assistant.
+
+PHASE 7:
+Implement document versions and lifecycle management.
+
+PHASE 8:
+Implement access control, audit history, notifications, testing, and deployment preparation.
+
+Do not stop after generating the UI or folder structure.
+
+Do not claim a feature is complete before implementing and testing it.
+
+If a required integration needs user approval, credentials, a Firebase project, an API key, or billing configuration, clearly explain the required action.
+
+Use real database data in the application.
+
+Keep sample/demo data clearly separated from real institutional data.
+
+# 24. FINAL PROJECT EXPERIENCE
+
+The final application should provide three connected experiences:
+
+A. ADMINISTRATOR EXPERIENCE
+
+Upload documents, run AI processing, manage knowledge, review proposed changes, approve articles, and manage users.
+
+B. STUDENT AND TEACHER EXPERIENCE
+
+Ask questions, search approved institutional information, access permitted articles, and report missing or outdated information.
+
+C. AI KNOWLEDGE LIFECYCLE EXPERIENCE
+
+Automatically process new documents, create knowledge, verify source accuracy, identify outdated policies, and recommend KEEP, UPDATE, or RETIRE.
+
+The application must be simple enough for a first-time student to understand and powerful enough for an institutional administrator to manage.
+
+FINAL SUCCESS CRITERIA:
+
+A user should be able to register, create an institution, upload an educational document, run the four AI agents sequentially, review the results, approve the knowledge article, ask questions through the Knowledge Assistant, and later manage changes through the document lifecycle.
+
+The result must be a complete, professional, functional, secure, and demonstrable AI-Powered Educational Knowledge Base Lifecycle Agent.
+
+Do not prioritize visual appearance over real functionality. Build both together.

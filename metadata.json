@@ -1,0 +1,6 @@
+{
+  "name": "AI-Powered Educational Knowledge Base Lifecycle Agent",
+  "description": "An intelligent educational knowledge management platform for Academies, Schools, Colleges, and Universities featuring a 4-Agent AI processing pipeline, Human Governance Review, RAG Knowledge Assistant, and automated Document Lifecycle Management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
